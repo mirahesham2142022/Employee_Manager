@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManager.Domain.Entities
 {
-    internal abstract class BaseEntity
+    public  abstract class BaseEntity
     {
         public int Id { get; set; }
       
