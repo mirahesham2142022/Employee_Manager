@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeManager.Application.Services.Implementation
+namespace EmployeeManager.Application.Services.Interfaces
 {
-    internal interface IEmployeeService
+    public  interface IEmployeeService
     {
 
         Task<PagedResultDto<EmployeeDto>> GetPageAsync(
@@ -16,13 +16,10 @@ namespace EmployeeManager.Application.Services.Implementation
             int? departmentId,
             CancellationToken cancellationToken = default);
 
-        Task<EmployeeDto?> GetByIdAsync(  int id,CancellationToken cancellationToken = default);
-
+        Task<EmployeeDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<EmployeeDto> UpdateAsync(int id, UpdateEmployeeDto dto, CancellationToken cancellationToken = default);
+        Task DeleteAsync(int id, CancellationToken cancellationToken = default);
         Task<EmployeeDto> CreateAsync(CreateEmployeeDto dto,CancellationToken cancellationToken = default);
 
-        Task<EmployeeDto?> UpdateAsync(int id,UpdateEmployeeDto dto,CancellationToken cancellationToken = default);
-
-        Task<bool> DeleteAsync(
-            int id,CancellationToken cancellationToken = default);
     }
 }

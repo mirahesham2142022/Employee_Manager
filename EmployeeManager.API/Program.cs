@@ -1,4 +1,8 @@
-
+using EmployeeManager.API.Middleware;
+using EmployeeManager.Application.Services.Implementation;
+using EmployeeManager.Application.Services.Interfaces;
+using EmployeeManager.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 namespace EmployeeManager.API
 {
     public class Program
@@ -13,8 +17,18 @@ namespace EmployeeManager.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddInfraStrucSture(builder.Configuration);
+
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
             var app = builder.Build();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();   
+
+            app.UseCors("Angular");
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

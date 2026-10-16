@@ -1,9 +1,10 @@
 ﻿using EmployeeManager.Application.Dtos.EmployeeDtos;
-using EmployeeManager.Application.Services.Implementation;
+using EmployeeManager.Application.Exceptions;
+using EmployeeManager.Application.Services.Interfaces;
 using EmployeeManager.Domain.Entities;
 using EmployeeManager.Domain.Interfaces;
 
-namespace EmployeeManager.Application.Services;
+namespace EmployeeManager.Application.Services.Implementation;
 
 public class EmployeeService : IEmployeeService
 {
@@ -35,17 +36,21 @@ public class EmployeeService : IEmployeeService
 
         return new PagedResultDto<EmployeeDto>
         {
-            Items = result.Items.Select(e=>ToDto(e)).ToList(),
+            Items = result.Items.Select(ToDto).ToList(),
             TotalCount = result.TotalCount,
             Page = page,
             PageSize = pageSize
         };
     }
 
-    public async Task<EmployeeDto?> GetByIdAsync(int id,CancellationToken cancellationToken = default)
+    public async Task<EmployeeDto> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken = default)
     {
-        var employee = await _employees.GetByIdAsync(id, cancellationToken);
-        return employee is null ? null : ToDto(employee);
+        var employee = await _employees.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException($"Employee {id} not found.");
+
+        return ToDto(employee);
     }
 
     public async Task<EmployeeDto> CreateAsync(
@@ -56,14 +61,11 @@ public class EmployeeService : IEmployeeService
             dto.DepartmentId, cancellationToken);
 
         if (department is null)
-            throw new InvalidOperationException("Department was not found.");
+            throw new NotFoundException($"Department {dto.DepartmentId} not found.");
 
         // 0 means there is no existing employee ID to exclude.
-        if (await _employees.EmailExistsAsync(
-                dto.Email, 0, cancellationToken))
-        {
-            throw new InvalidOperationException("Email is already in use.");
-        }
+        if (await _employees.EmailExistsAsync(dto.Email, 0, cancellationToken))
+            throw new ConflictException("Email already exists.");
 
         var employee = new Employee
         {
@@ -83,27 +85,22 @@ public class EmployeeService : IEmployeeService
         return ToDto(savedEmployee ?? employee);
     }
 
-    public async Task<EmployeeDto?> UpdateAsync(
+    public async Task<EmployeeDto> UpdateAsync(
         int id,
         UpdateEmployeeDto dto,
         CancellationToken cancellationToken = default)
     {
-        var employee = await _employees.GetByIdAsync(id, cancellationToken);
-
-        if (employee is null)
-            return null;
+        var employee = await _employees.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException($"Employee {id} not found.");
 
         var department = await _departments.GetByIdAsync(
             dto.DepartmentId, cancellationToken);
 
         if (department is null)
-            throw new InvalidOperationException("Department was not found.");
+            throw new NotFoundException($"Department {dto.DepartmentId} not found.");
 
-        if (await _employees.EmailExistsAsync(
-                dto.Email, id, cancellationToken))
-        {
-            throw new InvalidOperationException("Email is already in use.");
-        }
+        if (await _employees.EmailExistsAsync(dto.Email, id, cancellationToken))
+            throw new ConflictException("Email already exists.");
 
         employee.FirstName = dto.FirstName;
         employee.LastName = dto.LastName;
@@ -116,11 +113,14 @@ public class EmployeeService : IEmployeeService
         return ToDto(employee);
     }
 
-    public Task<bool> DeleteAsync(
+    public async Task DeleteAsync(
         int id,
         CancellationToken cancellationToken = default)
     {
-        return _employees.DeleteAsync(id, cancellationToken);
+        var deleted = await _employees.DeleteAsync(id, cancellationToken);
+
+        if (!deleted)
+            throw new NotFoundException($"Employee {id} not found.");
     }
 
     private static EmployeeDto ToDto(Employee employee)

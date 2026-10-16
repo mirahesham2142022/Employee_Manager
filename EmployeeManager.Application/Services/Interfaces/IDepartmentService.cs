@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeManager.Application.Services.Implementation
+namespace EmployeeManager.Application.Services.Interfaces
 {
-    internal interface IDepartmentService
+   public interface IDepartmentService
     {
         Task<List<DepartmentDto>> GetAllAsync(
         CancellationToken cancellationToken = default);
@@ -20,13 +20,9 @@ namespace EmployeeManager.Application.Services.Implementation
             CreateDepartmentDto dto,
             CancellationToken cancellationToken = default);
 
-        Task<DepartmentDto?> UpdateAsync(
-            int id,
-            UpdateDepartmentDto dto,
-            CancellationToken cancellationToken = default);
+        Task<DepartmentDto> UpdateAsync(int id, UpdateDepartmentDto dto, CancellationToken cancellationToken = default);
+        Task DeleteAsync(int id, CancellationToken cancellationToken = default);
 
-        Task<bool> DeleteAsync(
-            int id,
-            CancellationToken cancellationToken = default);
+     
     }
 }
