@@ -17,12 +17,14 @@ internal class EmployeeRepository : IEmployeeRepository
     public async Task<(List<Employee> Items, int TotalCount)> GetPageAsync(
     int page, int pageSize, int? departmentId, CancellationToken cancellationToken = default)
     {
+
         var query = _db.Employees.AsNoTracking();
 
         if (departmentId is not null)
             query = query.Where(e => e.DepartmentId == departmentId);
         var totalCount = await query.CountAsync(cancellationToken);//return count 
        
+        //filter  Data Happens in DataBase
         var items = await query
             .Include(e => e.Department)
             .OrderBy(e => e.FirstName)

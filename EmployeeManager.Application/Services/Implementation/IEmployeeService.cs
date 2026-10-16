@@ -1,0 +1,28 @@
+﻿using EmployeeManager.Application.Dtos.EmployeeDtos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EmployeeManager.Application.Services.Implementation
+{
+    internal interface IEmployeeService
+    {
+
+        Task<PagedResultDto<EmployeeDto>> GetPageAsync(
+            int page,
+            int pageSize,
+            int? departmentId,
+            CancellationToken cancellationToken = default);
+
+        Task<EmployeeDto?> GetByIdAsync(  int id,CancellationToken cancellationToken = default);
+
+        Task<EmployeeDto> CreateAsync(CreateEmployeeDto dto,CancellationToken cancellationToken = default);
+
+        Task<EmployeeDto?> UpdateAsync(int id,UpdateEmployeeDto dto,CancellationToken cancellationToken = default);
+
+        Task<bool> DeleteAsync(
+            int id,CancellationToken cancellationToken = default);
+    }
+}
