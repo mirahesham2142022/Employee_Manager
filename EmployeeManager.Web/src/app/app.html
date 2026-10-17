@@ -1,21 +1,34 @@
-<main class="page">
-  <header class="page-header">
+@if (auth.isLoggedIn()) {
+  <main class="page">
+    <header class="page-header">
+      <div class="header-row">
+        <div>
+          <h1>Employee Manager</h1>
+          <p>Manage employees and departments.</p>
+        </div>
+        <button type="button" class="logout" (click)="auth.logout()">Log out</button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Sections">
+      <button type="button" [class.active]="activeTab() === 'employees'"
+              [attr.aria-current]="activeTab() === 'employees' ? 'page' : null"
+              (click)="activeTab.set('employees')">Employees</button>
+      <button type="button" [class.active]="activeTab() === 'departments'"
+              [attr.aria-current]="activeTab() === 'departments' ? 'page' : null"
+              (click)="activeTab.set('departments')">Departments</button>
+    </nav>
+
+    @if (activeTab() === 'employees') {
+      <app-employees-page />
+    } @else {
+      <app-departments-page />
+    }
+  </main>
+} @else {
+  <main class="page login">
     <h1>Employee Manager</h1>
-    <p>Manage employees and departments.</p>
-  </header>
-
-  <nav class="tabs" aria-label="Sections">
-    <button type="button" [class.active]="activeTab() === 'employees'"
-            [attr.aria-current]="activeTab() === 'employees' ? 'page' : null"
-            (click)="activeTab.set('employees')">Employees</button>
-    <button type="button" [class.active]="activeTab() === 'departments'"
-            [attr.aria-current]="activeTab() === 'departments' ? 'page' : null"
-            (click)="activeTab.set('departments')">Departments</button>
-  </nav>
-
-  @if (activeTab() === 'employees') {
-    <app-employees-page />
-  } @else {
-    <app-departments-page />
-  }
-</main>
+    <p>Sign in to continue.</p>
+    <div #googleBtn></div>
+  </main>
+}

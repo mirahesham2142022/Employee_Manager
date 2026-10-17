@@ -2,10 +2,12 @@
 using EmployeeManager.Application.Services;
 using EmployeeManager.Application.Services.Implementation;
 using EmployeeManager.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManager.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/employees")]
 public class EmployeesController : ControllerBase

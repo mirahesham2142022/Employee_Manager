@@ -55,3 +55,42 @@
     }
   }
 }
+
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.logout {
+  padding: 8px 14px;
+  border: 1px solid $color-border;
+  border-radius: 6px;
+  background: transparent;
+  color: $color-muted;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-burgundy;
+    border-color: $color-burgundy;
+  }
+}
+
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 96px;
+
+  h1 {
+    color: $color-burgundy-dark;
+    font-size: 28px;
+  }
+
+  p {
+    color: $color-muted;
+  }
+}
