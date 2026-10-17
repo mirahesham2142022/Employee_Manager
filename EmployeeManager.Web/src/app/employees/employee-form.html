@@ -1,0 +1,53 @@
+<form class="panel" #employeeForm="ngForm" (ngSubmit)="submit(employeeForm)">
+  <div class="form-header">
+    <h2>{{ employee === null ? 'Add employee' : 'Edit employee' }}</h2>
+    <button class="close-button" type="button" aria-label="Close form" (click)="cancelled.emit()">×</button>
+  </div>
+
+  <div class="form-fields">
+    <label>First name
+      <input name="firstName" #firstNameField="ngModel" [(ngModel)]="model.firstName" required maxlength="100" autocomplete="given-name">
+      @if (firstNameField.invalid && firstNameField.touched) {
+        <span class="field-error">First name is required.</span>
+      }
+    </label>
+    <label>Last name
+      <input name="lastName" #lastNameField="ngModel" [(ngModel)]="model.lastName" required maxlength="100" autocomplete="family-name">
+      @if (lastNameField.invalid && lastNameField.touched) {
+        <span class="field-error">Last name is required.</span>
+      }
+    </label>
+    <label>Email
+      <input name="email" #emailField="ngModel" [(ngModel)]="model.email" type="email" required maxlength="200" autocomplete="email">
+      @if (emailField.invalid && emailField.touched) {
+        <span class="field-error">
+          {{ emailField.errors?.['required'] ? 'Email is required.' : 'Enter a valid email address.' }}
+        </span>
+      }
+    </label>
+    <label>Hire date
+      <input name="hireDate" #hireDateField="ngModel" [(ngModel)]="model.hireDate" type="date" required>
+      @if (hireDateField.invalid && hireDateField.touched) {
+        <span class="field-error">Hire date is required.</span>
+      }
+    </label>
+    <label>Department
+      <select name="departmentId" #departmentField="ngModel" [(ngModel)]="model.departmentId" required>
+        <option [ngValue]="0" disabled>Select a department</option>
+        @for (department of departments; track department.id) {
+          <option [ngValue]="department.id">{{ department.name }}</option>
+        }
+      </select>
+      @if (departmentField.touched && model.departmentId < 1) {
+        <span class="field-error">Select a department.</span>
+      }
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button class="button secondary" type="button" (click)="cancelled.emit()">Cancel</button>
+    <button class="button primary" type="submit" [disabled]="saving">
+      {{ saving ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+</form>

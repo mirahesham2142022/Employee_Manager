@@ -1,0 +1,6 @@
+@use 'mixins' as *;
+
+.department-name-field {
+  @include field-label;
+  max-width: 460px;
+}

@@ -1,0 +1,162 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.page {
+  width: min(1000px, calc(100% - 32px));
+  margin: 40px auto;
+
+  @include mobile {
+    margin: 24px auto;
+  }
+}
+
+.page-header {
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid $color-burgundy;
+
+  h1 {
+    color: $color-burgundy-dark;
+    font-size: 28px;
+    font-weight: 650;
+  }
+
+  p {
+    margin-top: 6px;
+    color: $color-muted;
+    font-size: 14px;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 18px;
+  border-bottom: 1px solid $color-border;
+
+  button {
+    padding: 10px 14px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: $color-muted;
+    font: inherit;
+    cursor: pointer;
+
+    &.active {
+      border-bottom-color: $color-burgundy;
+      color: $color-burgundy;
+      font-weight: 600;
+    }
+  }
+}
+
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.logout {
+  padding: 8px 14px;
+  border: 1px solid $color-border;
+  border-radius: 6px;
+  background: transparent;
+  color: $color-muted;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-burgundy;
+    border-color: $color-burgundy;
+  }
+}
+
+/* --- Modern Centered Login Card --- */
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  padding: 24px;
+}
+
+.login-card {
+  width: min(400px, 100%);
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(95, 29, 45, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+  padding: 40px 32px 28px;
+  text-align: center;
+
+  h1 {
+    color: $color-burgundy-dark;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+
+  .subtitle {
+    color: $color-muted;
+    font-size: 14px;
+    margin: 0 0 20px;
+    line-height: 1.4;
+  }
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: $color-burgundy-light;
+  color: $color-burgundy;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid $color-border;
+  }
+
+  span {
+    padding: 0 12px;
+    color: $color-muted;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.google-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+  margin: 10px 0;
+}
+
+.login-footer {
+  margin: 24px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid #f0ebee;
+  color: #9c949b;
+  font-size: 12px;
+}

@@ -1,0 +1,43 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.employee-filters {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+
+  @include mobile {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.search-form {
+  display: flex;
+  gap: 8px;
+
+  input {
+    min-width: 210px;
+
+    @include mobile {
+      min-width: 0;
+      flex: 1;
+    }
+  }
+}
+
+.department-filter {
+  @include field-label;
+
+  select {
+    min-width: 190px;
+  }
+
+  @include mobile {
+    &,
+    select {
+      width: 100%;
+    }
+  }
+}
