@@ -14,6 +14,7 @@ namespace EmployeeManager.Application.Services.Interfaces
             int page,
             int pageSize,
             int? departmentId,
+            string searchTerm,
             CancellationToken cancellationToken = default);
 
         Task<EmployeeDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);

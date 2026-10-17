@@ -11,7 +11,7 @@ namespace EmployeeManager.Domain.Interfaces
     {
         Task<(List<Employee> Items, int TotalCount)> 
             GetPageAsync(
-        int page, int pageSize, int? departmentId, CancellationToken cancellationToken = default);
+        int page, int pageSize, int? departmentId,string searchTerm, CancellationToken cancellationToken = default);
         Task<Employee?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task AddAsync(Employee employee, CancellationToken cancellationToken = default);
         Task UpdateAsync(Employee employee, CancellationToken cancellationToken = default);

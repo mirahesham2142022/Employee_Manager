@@ -23,10 +23,11 @@ public class EmployeesController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] int? departmentId = null,
+         [FromQuery] string? searchTerm = null,
         CancellationToken cancellationToken = default)
     {
         var result = await _employeeService.GetPageAsync(
-            page, pageSize, departmentId, cancellationToken);
+            page, pageSize, departmentId,  searchTerm, cancellationToken);
 
         return Ok(result);
     }
