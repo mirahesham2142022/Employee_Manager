@@ -1,163 +1,21 @@
 <main class="page">
   <header class="page-header">
-    <div>
-      <h1>Employee Manager</h1>
-      <p>Manage employees and departments.</p>
-    </div>
-    @if (activeTab === 'employees') {
-      <button class="button primary" type="button" (click)="startCreate()">Add employee</button>
-    } @else {
-      <button class="button primary" type="button" (click)="startCreateDepartment()">Add department</button>
-    }
+    <h1>Employee Manager</h1>
+    <p>Manage employees and departments.</p>
   </header>
 
   <nav class="tabs" aria-label="Sections">
-    <button type="button" [class.active]="activeTab === 'employees'" (click)="activeTab = 'employees'">Employees</button>
-    <button type="button" [class.active]="activeTab === 'departments'" (click)="activeTab = 'departments'">Departments</button>
+    <button type="button" [class.active]="activeTab() === 'employees'"
+            [attr.aria-current]="activeTab() === 'employees' ? 'page' : null"
+            (click)="activeTab.set('employees')">Employees</button>
+    <button type="button" [class.active]="activeTab() === 'departments'"
+            [attr.aria-current]="activeTab() === 'departments' ? 'page' : null"
+            (click)="activeTab.set('departments')">Departments</button>
   </nav>
 
-  @if (errorMessage()) {
-    <div class="error" role="alert">{{ errorMessage() }}</div>
-  }
-
-  @if (activeTab === 'employees' && showForm) {
-    <form class="panel employee-form" #employeeForm="ngForm" (ngSubmit)="saveEmployee(employeeForm)">
-      <div class="form-header">
-        <h2>{{ editingEmployeeId === null ? 'Add employee' : 'Edit employee' }}</h2>
-        <button class="close-button" type="button" aria-label="Close form" (click)="closeForm()">×</button>
-      </div>
-
-      <div class="form-fields">
-        <label>First name
-          <input name="firstName" [(ngModel)]="form.firstName" required maxlength="100" autocomplete="given-name">
-        </label>
-        <label>Last name
-          <input name="lastName" [(ngModel)]="form.lastName" required maxlength="100" autocomplete="family-name">
-        </label>
-        <label>Email
-          <input name="email" [(ngModel)]="form.email" type="email" required maxlength="200" autocomplete="email">
-        </label>
-        <label>Hire date
-          <input name="hireDate" [(ngModel)]="form.hireDate" type="date" required>
-        </label>
-        <label>Department
-          <select name="departmentId" [(ngModel)]="form.departmentId" required>
-            <option [ngValue]="0" disabled>Select a department</option>
-            @for (department of departments(); track department.id) {
-              <option [ngValue]="department.id">{{ department.name }}</option>
-            }
-          </select>
-        </label>
-      </div>
-
-      <div class="form-actions">
-        <button class="button secondary" type="button" (click)="closeForm()">Cancel</button>
-        <button class="button primary" type="submit" [disabled]="saving()">
-          {{ saving() ? 'Saving…' : 'Save' }}
-        </button>
-      </div>
-    </form>
-  }
-
-  @if (activeTab === 'employees') {
-  <section class="panel">
-    <div class="list-header">
-      <h2>Employee list <span>({{ totalCount() }})</span></h2>
-      <div class="employee-filters">
-        <form class="search-form" (ngSubmit)="searchEmployees()">
-          <label class="visually-hidden" for="employee-search">Search employees</label>
-          <input id="employee-search" name="searchTerm" [(ngModel)]="searchTerm" placeholder="Search name or email">
-          <button class="button secondary" type="submit">Search</button>
-        </form>
-        <label class="department-filter">Filter by department
-          <select [ngModel]="selectedDepartmentId" (ngModelChange)="changeDepartment($event)" name="departmentFilter">
-            <option [ngValue]="null">All departments</option>
-            @for (department of departments(); track department.id) {
-              <option [ngValue]="department.id">{{ department.name }}</option>
-            }
-          </select>
-        </label>
-      </div>
-    </div>
-
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr><th>Name</th><th>Email</th><th>Department</th><th>Hire date</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-          @if (loading()) {
-            <tr><td class="table-message" colspan="5">Loading employees…</td></tr>
-          } @else if (employees().length === 0) {
-            <tr><td class="table-message" colspan="5">No employees found.</td></tr>
-          } @else {
-            @for (employee of employees(); track employee.id) {
-              <tr>
-                <td>{{ employee.firstName }} {{ employee.lastName }}</td>
-                <td>{{ employee.email }}</td>
-                <td>{{ employee.departmentName }}</td>
-                <td>{{ employee.hireDate }}</td>
-                <td class="actions">
-                  <button class="link-button" type="button" (click)="startEdit(employee)">Edit</button>
-                  <button class="link-button delete-button" type="button" (click)="deleteEmployee(employee)">Delete</button>
-                </td>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <footer class="pagination">
-      <span>Page {{ page() }} of {{ totalPages() }}</span>
-      <div>
-        <button class="button secondary" type="button" [disabled]="page() <= 1 || loading()" (click)="goToPage(page() - 1)">Previous</button>
-        <button class="button secondary" type="button" [disabled]="page() >= totalPages() || loading()" (click)="goToPage(page() + 1)">Next</button>
-      </div>
-    </footer>
-  </section>
+  @if (activeTab() === 'employees') {
+    <app-employees-page />
   } @else {
-    @if (showDepartmentForm) {
-      <form class="panel department-form" #departmentForm="ngForm" (ngSubmit)="saveDepartment(departmentForm)">
-        <div class="form-header">
-          <h2>{{ editingDepartmentId === null ? 'Add department' : 'Edit department' }}</h2>
-          <button class="close-button" type="button" aria-label="Close form" (click)="closeDepartmentForm()">×</button>
-        </div>
-        <label class="department-name-field">Department name
-          <input name="departmentName" [(ngModel)]="departmentName" required maxlength="100">
-        </label>
-        <div class="form-actions">
-          <button class="button secondary" type="button" (click)="closeDepartmentForm()">Cancel</button>
-          <button class="button primary" type="submit" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save' }}</button>
-        </div>
-      </form>
-    }
-
-    <section class="panel">
-      <div class="list-header">
-        <h2>Department list <span>({{ departments().length }})</span></h2>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Name</th><th>Actions</th></tr></thead>
-          <tbody>
-            @if (departments().length === 0) {
-              <tr><td class="table-message" colspan="2">No departments found.</td></tr>
-            } @else {
-              @for (department of departments(); track department.id) {
-                <tr>
-                  <td>{{ department.name }}</td>
-                  <td class="actions">
-                    <button class="link-button" type="button" (click)="startEditDepartment(department)">Edit</button>
-                    <button class="link-button delete-button" type="button" (click)="deleteDepartment(department)">Delete</button>
-                  </td>
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
-      <p class="help-text">A department with employees assigned may not be deleted.</p>
-    </section>
+    <app-departments-page />
   }
 </main>
