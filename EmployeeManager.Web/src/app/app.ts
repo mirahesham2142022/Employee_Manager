@@ -25,9 +25,13 @@ export class App {
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / this.pageSize)));
 
   selectedDepartmentId: number | null = null;
+  activeTab: 'employees' | 'departments' = 'employees';
   showForm = false;
   editingEmployeeId: number | null = null;
   form: CreateEmployeeDto = this.emptyForm();
+  showDepartmentForm = false;
+  editingDepartmentId: number | null = null;
+  departmentName = '';
 
   constructor() {
     void this.loadDepartments();
@@ -91,6 +95,65 @@ export class App {
   closeForm(): void {
     this.showForm = false;
     this.editingEmployeeId = null;
+  }
+
+  startCreateDepartment(): void {
+    this.editingDepartmentId = null;
+    this.departmentName = '';
+    this.showDepartmentForm = true;
+    this.errorMessage.set(null);
+  }
+
+  startEditDepartment(department: DepartmentDto): void {
+    this.editingDepartmentId = department.id;
+    this.departmentName = department.name;
+    this.showDepartmentForm = true;
+    this.errorMessage.set(null);
+  }
+
+  closeDepartmentForm(): void {
+    this.showDepartmentForm = false;
+    this.editingDepartmentId = null;
+  }
+
+  async saveDepartment(form: NgForm): Promise<void> {
+    if (form.invalid) {
+      form.control.markAllAsTouched();
+      return;
+    }
+    this.saving.set(true);
+    this.errorMessage.set(null);
+    try {
+      const dto = { name: this.departmentName.trim() };
+      if (this.editingDepartmentId === null) {
+        await firstValueFrom(this.api.createDepartment(dto));
+      } else {
+        await firstValueFrom(this.api.updateDepartment(this.editingDepartmentId, dto));
+      }
+      this.closeDepartmentForm();
+      await this.loadDepartments();
+      await this.loadEmployees();
+    } catch (error: unknown) {
+      this.errorMessage.set(this.getErrorMessage(error, 'Could not save the department. Check the name and try again.'));
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
+  async deleteDepartment(department: DepartmentDto): Promise<void> {
+    if (!window.confirm(`Delete ${department.name}?`)) return;
+    this.errorMessage.set(null);
+    try {
+      await firstValueFrom(this.api.deleteDepartment(department.id));
+      if (this.selectedDepartmentId === department.id) {
+        this.selectedDepartmentId = null;
+        this.page.set(1);
+      }
+      await this.loadDepartments();
+      await this.loadEmployees();
+    } catch (error: unknown) {
+      this.errorMessage.set(this.getErrorMessage(error, 'Could not delete the department. It may still have employees assigned.'));
+    }
   }
 
   async saveEmployee(form: NgForm): Promise<void> {

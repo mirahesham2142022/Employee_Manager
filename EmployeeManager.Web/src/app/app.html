@@ -1,17 +1,26 @@
 <main class="page">
   <header class="page-header">
     <div>
-      <h1>Employees</h1>
-      <p>View and manage employee details.</p>
+      <h1>Employee Manager</h1>
+      <p>Manage employees and departments.</p>
     </div>
-    <button class="button primary" type="button" (click)="startCreate()">Add employee</button>
+    @if (activeTab === 'employees') {
+      <button class="button primary" type="button" (click)="startCreate()">Add employee</button>
+    } @else {
+      <button class="button primary" type="button" (click)="startCreateDepartment()">Add department</button>
+    }
   </header>
+
+  <nav class="tabs" aria-label="Sections">
+    <button type="button" [class.active]="activeTab === 'employees'" (click)="activeTab = 'employees'">Employees</button>
+    <button type="button" [class.active]="activeTab === 'departments'" (click)="activeTab = 'departments'">Departments</button>
+  </nav>
 
   @if (errorMessage()) {
     <div class="error" role="alert">{{ errorMessage() }}</div>
   }
 
-  @if (showForm) {
+  @if (activeTab === 'employees' && showForm) {
     <form class="panel employee-form" #employeeForm="ngForm" (ngSubmit)="saveEmployee(employeeForm)">
       <div class="form-header">
         <h2>{{ editingEmployeeId === null ? 'Add employee' : 'Edit employee' }}</h2>
@@ -50,6 +59,7 @@
     </form>
   }
 
+  @if (activeTab === 'employees') {
   <section class="panel">
     <div class="list-header">
       <h2>Employee list <span>({{ totalCount() }})</span></h2>
@@ -99,4 +109,48 @@
       </div>
     </footer>
   </section>
+  } @else {
+    @if (showDepartmentForm) {
+      <form class="panel department-form" #departmentForm="ngForm" (ngSubmit)="saveDepartment(departmentForm)">
+        <div class="form-header">
+          <h2>{{ editingDepartmentId === null ? 'Add department' : 'Edit department' }}</h2>
+          <button class="close-button" type="button" aria-label="Close form" (click)="closeDepartmentForm()">×</button>
+        </div>
+        <label class="department-name-field">Department name
+          <input name="departmentName" [(ngModel)]="departmentName" required maxlength="100">
+        </label>
+        <div class="form-actions">
+          <button class="button secondary" type="button" (click)="closeDepartmentForm()">Cancel</button>
+          <button class="button primary" type="submit" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save' }}</button>
+        </div>
+      </form>
+    }
+
+    <section class="panel">
+      <div class="list-header">
+        <h2>Department list <span>({{ departments().length }})</span></h2>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Name</th><th>Actions</th></tr></thead>
+          <tbody>
+            @if (departments().length === 0) {
+              <tr><td class="table-message" colspan="2">No departments found.</td></tr>
+            } @else {
+              @for (department of departments(); track department.id) {
+                <tr>
+                  <td>{{ department.name }}</td>
+                  <td class="actions">
+                    <button class="link-button" type="button" (click)="startEditDepartment(department)">Edit</button>
+                    <button class="link-button delete-button" type="button" (click)="deleteDepartment(department)">Delete</button>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="help-text">A department with employees assigned may not be deleted.</p>
+    </section>
+  }
 </main>

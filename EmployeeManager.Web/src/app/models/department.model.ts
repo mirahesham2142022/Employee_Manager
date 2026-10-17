@@ -3,3 +3,7 @@ export interface DepartmentDto {
   name: string;
   createdAt: string;
 }
+
+export interface DepartmentInputDto {
+  name: string;
+}
