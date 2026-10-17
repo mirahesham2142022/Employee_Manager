@@ -23,7 +23,6 @@ public class EmployeeService : IEmployeeService
         int page,
         int pageSize,
         int? departmentId,
-        string? searchTerm,
         CancellationToken cancellationToken = default)
     {
         if (page < 1)
@@ -33,7 +32,7 @@ public class EmployeeService : IEmployeeService
             throw new ArgumentOutOfRangeException(nameof(pageSize));
 
         var result = await _employees.GetPageAsync(
-            page, pageSize, departmentId, searchTerm, cancellationToken);
+            page, pageSize, departmentId, cancellationToken);
 
         return new PagedResultDto<EmployeeDto>
         {

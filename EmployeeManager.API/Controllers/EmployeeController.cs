@@ -17,17 +17,16 @@ public class EmployeesController : ControllerBase
         _employeeService = employeeService;
     }
 
-    // GET /api/employees/GetPage?page=1&pageSize=10&departmentId=2&searchTerm=ahmed
+    // GET /api/employees/GetPage?page=1&pageSize=10&departmentId=2
     [HttpGet("GetPage")]
     public async Task<IActionResult> GetPage(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] int? departmentId = null,
-        [FromQuery] string? searchTerm = null,
         CancellationToken cancellationToken = default)
     {
         var result = await _employeeService.GetPageAsync(
-            page, pageSize, departmentId, searchTerm, cancellationToken);
+            page, pageSize, departmentId, cancellationToken);
 
         return Ok(result);
     }
