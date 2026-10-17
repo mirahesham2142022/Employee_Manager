@@ -3,6 +3,7 @@ using EmployeeManager.Application.Services.Implementation;
 using EmployeeManager.Application.Services.Interfaces;
 using EmployeeManager.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 namespace EmployeeManager.API
 {
     public class Program
@@ -21,9 +22,15 @@ namespace EmployeeManager.API
 
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+            builder.Services.AddCors(options =>
+    options.AddPolicy("Angular", policy =>
+        policy.WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()));
+
 
             var app = builder.Build();
-            app.UseMiddleware<ExceptionHandlingMiddleware>();   
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseCors("Angular");
             app.UseHttpsRedirection();
