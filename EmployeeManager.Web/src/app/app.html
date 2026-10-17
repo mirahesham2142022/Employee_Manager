@@ -1,0 +1,21 @@
+<main class="page">
+  <header class="page-header">
+    <h1>Employee Manager</h1>
+    <p>Manage employees and departments.</p>
+  </header>
+
+  <nav class="tabs" aria-label="Sections">
+    <button type="button" [class.active]="activeTab() === 'employees'"
+            [attr.aria-current]="activeTab() === 'employees' ? 'page' : null"
+            (click)="activeTab.set('employees')">Employees</button>
+    <button type="button" [class.active]="activeTab() === 'departments'"
+            [attr.aria-current]="activeTab() === 'departments' ? 'page' : null"
+            (click)="activeTab.set('departments')">Departments</button>
+  </nav>
+
+  @if (activeTab() === 'employees') {
+    <app-employees-page />
+  } @else {
+    <app-departments-page />
+  }
+</main>

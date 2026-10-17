@@ -1,0 +1,49 @@
+@if (errorMessage()) {
+  <div class="error" role="alert">{{ errorMessage() }}</div>
+}
+
+@if (formOpen()) {
+  <app-department-form
+    [department]="editingDepartment()"
+    [saving]="saving()"
+    (saved)="saveDepartment($event)"
+    (cancelled)="closeForm()" />
+}
+
+<section class="panel">
+  <div class="list-header">
+    <h2>Department list <span>({{ departments().length }})</span></h2>
+    <button class="button primary" type="button" (click)="openCreateForm()">Add department</button>
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Name</th><th>Actions</th></tr></thead>
+      <tbody>
+        @if (departments().length === 0) {
+          <tr><td class="table-message" colspan="2">No departments found.</td></tr>
+        } @else {
+          @for (department of departments(); track department.id) {
+            <tr>
+              <td>{{ department.name }}</td>
+              <td class="actions">
+                <button class="link-button" type="button" (click)="openEditForm(department)">Edit</button>
+                <button class="link-button delete-button" type="button" (click)="askToDelete(department)">Delete</button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="help-text">A department with employees assigned may not be deleted.</p>
+</section>
+
+@if (departmentToDelete(); as department) {
+  <app-confirm-dialog
+    title="Delete department"
+    [message]="'Delete ' + department.name + '? This cannot be undone.'"
+    confirmLabel="Delete"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()" />
+}
