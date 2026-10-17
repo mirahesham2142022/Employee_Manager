@@ -25,6 +25,7 @@ export class App {
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / this.pageSize)));
 
   selectedDepartmentId: number | null = null;
+  searchTerm = '';
   activeTab: 'employees' | 'departments' = 'employees';
   showForm = false;
   editingEmployeeId: number | null = null;
@@ -50,7 +51,7 @@ export class App {
     this.loading.set(true);
     this.errorMessage.set(null);
     try {
-      const result = await firstValueFrom(this.api.getEmployees(this.page(), this.pageSize, this.selectedDepartmentId));
+      const result = await firstValueFrom(this.api.getEmployees(this.page(), this.pageSize, this.selectedDepartmentId, this.searchTerm));
       this.employees.set(result.items);
       this.totalCount.set(result.totalCount);
     } catch (error: unknown) {
@@ -62,6 +63,11 @@ export class App {
 
   async changeDepartment(departmentId: number | null): Promise<void> {
     this.selectedDepartmentId = departmentId;
+    this.page.set(1);
+    await this.loadEmployees();
+  }
+
+  async searchEmployees(): Promise<void> {
     this.page.set(1);
     await this.loadEmployees();
   }

@@ -63,14 +63,21 @@
   <section class="panel">
     <div class="list-header">
       <h2>Employee list <span>({{ totalCount() }})</span></h2>
-      <label class="department-filter">Filter by department
-        <select [ngModel]="selectedDepartmentId" (ngModelChange)="changeDepartment($event)" name="departmentFilter">
-          <option [ngValue]="null">All departments</option>
-          @for (department of departments(); track department.id) {
-            <option [ngValue]="department.id">{{ department.name }}</option>
-          }
-        </select>
-      </label>
+      <div class="employee-filters">
+        <form class="search-form" (ngSubmit)="searchEmployees()">
+          <label class="visually-hidden" for="employee-search">Search employees</label>
+          <input id="employee-search" name="searchTerm" [(ngModel)]="searchTerm" placeholder="Search name or email">
+          <button class="button secondary" type="submit">Search</button>
+        </form>
+        <label class="department-filter">Filter by department
+          <select [ngModel]="selectedDepartmentId" (ngModelChange)="changeDepartment($event)" name="departmentFilter">
+            <option [ngValue]="null">All departments</option>
+            @for (department of departments(); track department.id) {
+              <option [ngValue]="department.id">{{ department.name }}</option>
+            }
+          </select>
+        </label>
+      </div>
     </div>
 
     <div class="table-scroll">

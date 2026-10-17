@@ -10,9 +10,10 @@ export class EmployeeApiService {
   private readonly employeeUrl = 'https://localhost:7025/api/employees';
   private readonly departmentUrl = 'https://localhost:7025/api/Department';
 
-  getEmployees(page: number, pageSize: number, departmentId: number | null): Observable<EmployeePageDto> {
+  getEmployees(page: number, pageSize: number, departmentId: number | null, searchTerm: string): Observable<EmployeePageDto> {
     let params = new HttpParams().set('page', page).set('pageSize', pageSize);
     if (departmentId !== null) params = params.set('departmentId', departmentId);
+    if (searchTerm.trim()) params = params.set('searchTerm', searchTerm.trim());
     return this.http.get<EmployeePageDto>(`${this.employeeUrl}/GetPage`, { params });
   }
 

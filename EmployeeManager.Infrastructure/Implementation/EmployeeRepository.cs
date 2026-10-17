@@ -15,14 +15,22 @@ public class EmployeeRepository : IEmployeeRepository
     }
 
     public async Task<(List<Employee> Items, int TotalCount)> GetPageAsync(
-    int page, int pageSize, int? departmentId, CancellationToken cancellationToken = default)
+    int page, int pageSize, int? departmentId, string? searchTerm, CancellationToken cancellationToken = default)
     {
 
         var query = _db.Employees.AsNoTracking();
 
         if (departmentId is not null)
             query = query.Where(e => e.DepartmentId == departmentId);
-        var totalCount = await query.CountAsync(cancellationToken);//return count 
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim();
+            query = query.Where(e =>
+                e.FirstName.Contains(searchTerm) ||
+                e.LastName.Contains(searchTerm) ||
+                e.Email.Contains(searchTerm));
+        }
+        var totalCount = await query.CountAsync(cancellationToken); //return count 
        
         //filter  Data Happens in DataBase
         var items = await query
